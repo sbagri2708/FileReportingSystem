@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+
+@section Scripts{
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+    <script>
+
+        function validateForm() {
+            if ($('#txtFolderPath').val() == '') {
+                alert('Please enter valid path.');
+                return false;
+            }
+
+            else {
+                processfolder();
+            }
+        }
+
+        function processfolder() {
+            $.ajax({
+                url: "/Home/Process?folderPath=" + $('#txtFolderPath').val(),
+                async: true,
+                dataType: 'json',
+                success: function (data) {
+                    if (data == 'Error') {
+                        alert('Path does not exist.');
+                    }
+                    else {
+                        window.location.href = '/Home/Page';
+                    }
+                }
+            });
+        }
+
+    </script>
+}
+<body>
+    <p align="center" style="font-size: x-large">File Management System</p>
+    <br />
+    <div align="center">
+
+        <span>Select Folder:</span>
+        <br />
+        <input type="text" name="txtFolderPath" id="txtFolderPath" value="@ViewBag.DefaultPath" style="width: 900px;" /> <br />
+
+        <br />
+        <br />
+        <button class="btn btn-primary" type="submit" id="btnContinue" onclick="return validateForm();">Upload</button>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Available Files</h1>
+
+<div style="width:90%; margin:0 auto;">
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th>File Type</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+<style>
+    tr.even {
+        background-color: #F5F5F5 !important;
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/r/dt/jq-2.1.4,jszip-2.5.0,pdfmake-0.1.18,dt-1.10.9,af-2.0.0,b-1.0.3,b-colvis-1.0.3,b-html5-1.0.3,b-print-1.0.3,se-1.0.1/datatables.min.css" />
+
+@section Scripts{
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/r/dt/jq-2.1.4,jszip-2.5.0,pdfmake-0.1.18,dt-1.10.9,af-2.0.0,b-1.0.3,b-colvis-1.0.3,b-html5-1.0.3,b-print-1.0.3,se-1.0.1/datatables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var arrayReturn = [];
+            $.ajax({
+                url: "/Home/FetchFileCountByType",
+                async: true,
+                dataType: 'json',
+                success: function (data) {
+                    for (var i = 0, len = data.length; i < len; i++) {
+                        console.log(data[i]);
+                        var type = data[i].extension;
+                        var count = data[i].count;
+                        arrayReturn.push([type, count]);
+                    }
+                    inittable(arrayReturn);
+                }
+            });
+
+            function inittable(data) {
+                $('#myTable').DataTable({
+                    "aaData": data,
+                    "dom": 'lBfrtip',
+                    "columnDefs": [
+                        {
+                            "targets": 0,
+                            "render": function (data, type, row) {
+                                return "<a href=\"/Home/Metadata?fileType=" + encodeURIComponent(data) + "\">" + data + "</a>";
+                            }
+                        }
+                    ],
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            text: 'Export to Excel',
+                            title: 'File watcher report : Export to group wise file count',
+
+                            download: 'open',
+                            orientation: 'landscape',
+                            exportOptions: {
+                                columns: ':visible'
+                            }
+                        }]
+                });
+            }
+        });
+    </script>
+}

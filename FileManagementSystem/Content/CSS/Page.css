@@ -1,0 +1,11 @@
+﻿
+    .box {
+           background: lightblue;
+           height: 50px;
+           width: 200px;
+           margin: 20px;
+           padding: 40px;
+           border: 4px solid black;
+           display: inline-block;
+       }
+
